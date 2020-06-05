@@ -4,12 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>我的播放器</title>
     <link rel="stylesheet" href="music.css">
     <style>
-        /* [v-cloak] {
-            display: none;
-        } */
+
     </style>
 </head>
 
@@ -18,10 +16,11 @@
         <!-- 头条开始 -->
         <section class="navs">
             <section class="navs-img">
-                <img src="./images/player_title.png" alt="">
+                <img src="./images/player_title.png">
             </section>
             <section class="navs-content">
-                <input type="text">
+                <!-- autocomplete 对客户的质料进行保密,防止浏览器软件获取到内容-->
+                <input type="text" autocomplete="off" v-model="query" @click.enter="searchMusic()">
                 <img src="./images/zoom.png">
             </section>
         </section>
@@ -29,7 +28,17 @@
         <!--  内容区开始-->
         <section class="content">
             <!-- 左边 -->
-            <section class="left">...</section>
+            <section class="left">
+                <ul class="song_list">
+                    <li v-for="item in musicList">
+                        <a href="javascript:;" @click="playMusic(item.id)">你好</a>
+                        <b>{{item.name}}</b>
+                        <span>
+                            <i @click="playMv((item.mvid))" v-for="item.mvid!=0"></i>
+                        </span>
+                    </li>
+                </ul>
+            </section>
             <!-- 中间 -->
             <section class="middle">
                 <section class="middle-top">
@@ -57,6 +66,66 @@
         </section>
         <!-- 底部结束 -->
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- 官网的axios的地址 -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        //域名
+        axios.defaults.baseURL = 'https://apimusic.linweiqin.com/';
+        let vm = new Vue({
+            el: "#app",
+            data: {
+                //搜索关键字
+                query: "",
+                //歌曲列表
+                musicList: [],
+                // 是否正在播放
+                isPlay: false,
+                // 歌曲热门评论
+                hotComments: [],
+                // 歌曲封面地址
+                coverUrl: '',
+                // 显示视频播放
+                showVideo: false,
+                // mv地址
+                mvUrl: ''
+            },
+            methods: {
+                //搜索歌曲
+                searchMusic() {
+                    if (this.query === 0) {
+                        return
+                    }
+                    axios.get('/search?keywords=' + this.query).them(response => {
+                            //保存内容
+                            this.musicList = response.data.result.songs
+                        })
+                        //清空搜索
+                    this.query = ""
+                },
+                //播放歌曲
+                playMusic(musicId) {
+                    //获取歌曲的url
+                    axios.get('/song/yrl?id=' + musicId).them(response => {
+                            this.musicUrl = response.data.data[0].url
+                        })
+                        //获取歌曲评论
+                    axios.get('/comment/hot?type=0&id=' + musicId).them(response => {
+                            console.log(response)
+                                // 保存热门评论
+                            this.hotComments = response.data.hotComments
+                        })
+                        //获取歌曲封面
+                    axios.get('/song/detail?ids=' + musicId).them(response => {
+                        console.log(response)
+                            // 设置封面
+                        this.coverUrl = response.data.song[0].al.picUrl
+                    })
+                }
+
+            },
+        })
+    </script>
 </body>
 
 </html>
