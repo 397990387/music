@@ -1,0 +1,133 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    background-image: url("./images/bg.jpg");
+}
+#app {
+    width: 800px;
+    height: 500px;
+    border: 1px solid red;
+    .navs {
+        width: 100%;
+        height: 50px;      
+        display: flex;
+        justify-content: space-between;
+        background-color:#39abd8 ;
+        
+      .navs-img {
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            width: 100%;
+         flex: 1;  
+         img{
+             width: 44px;
+             height: 22px;
+         }   
+      }
+  
+      .navs-content {
+          padding-right: 20px;
+          position: relative;
+        flex: 9;
+        height: 50px;
+        text-align: right;
+        line-height: 50px;
+        input {
+           background-color: #89d1ea;
+           border: none;
+            width: 220px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 30px;
+        }
+  
+        img{
+            position: absolute;
+            right: 30px;
+            top: 20px;
+           width: 15px;
+           height: 15px;
+        }
+      }
+    }
+  
+    .content {
+        display: flex;
+       width: 100%;
+  
+      .left {
+        width: 200px;
+        height: 400px;
+        background-color: rgba(225, 225, 225, .5);
+        border-right: 1px solid black;
+
+      }
+  
+      .middle {
+          position: relative;
+          width: 400px;
+          height: 400px;
+          border-right: 1px solid black;
+        .middle-top {
+            position: absolute;
+            left: 50%;
+        }
+  
+        .middle-bottom {
+            margin: auto;
+            margin-top: 60px;
+            width: 250px;
+            height: 250px;
+            .img{
+                z-index: -1;
+                position: absolute;
+                top: 118px;
+                left: 134px;
+                width: 138px;
+                height: 138px;
+            }
+        }
+      }
+  
+      .right {
+
+        .right-item {
+  
+        }
+  
+        .right-way {
+  
+        }
+      }
+    }
+  
+    .bottom {
+
+        width: 100%;
+        height: 50px;
+        background-color: #f1f3f4;
+        audio{
+            height: 40px;
+            width: 100%;
+        }
+    //   section.bottom-one {
+       
+    //   }
+  
+    //   section.bottom-two {
+  
+    //   }
+  
+    //   section.bottom-three {
+  
+    //   }
+  
+    //   section.bottom-four {
+  
+    //   }
+    }
+  }
