@@ -7,29 +7,44 @@
     <title>Document</title>
     <link rel="stylesheet" href="music.css">
     <style>
-        /* [v-cloak] {
+        [v-cloak] {
             display: none;
-        } */
+        }
     </style>
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
         <!-- 头条开始 -->
         <section class="navs">
             <section class="navs-img">
                 <img src="./images/player_title.png" alt="">
             </section>
             <section class="navs-content">
-                <input type="text">
+                <input type="text" autocomplete="off" v-model='query' @keyup.enter="searchMusic()">
                 <img src="./images/zoom.png">
             </section>
         </section>
         <!-- 头条结束 -->
         <!--  内容区开始-->
         <section class="content">
-            <!-- 左边 -->
-            <section class="left">...</section>
+            <!-- 左边开始 -->
+            <div class="left">..
+                <ul class="song_wrapper">
+                    <li class="song_list" v-for="item ,index in musicList">
+                        <!-- 点击看开始的图片 -->
+                        <!-- 点击这个小播放图片的时候,歌会自动播放 -->
+                        <a href="javascript:;" @click="playMusic(item.id)"></a>
+                        <b>{{item.name}}</b>
+                        <span>
+                            <!--  -->
+                                <i @click=playmv(item.mvid) v-if="item.mvid!=0" ></i>
+                            </span>
+                    </li>
+                </ul>
+                <img src="images/line.png" class="switch_btn" alt="">
+            </div>
+            <!-- 左边结束 -->
             <!-- 中间 -->
             <section class="middle">
                 <section class="middle-top">
@@ -42,8 +57,17 @@
             </section>
             <!-- 右边 -->
             <section class="right">
-                <section class="right-item">热门留言</section>
-                <section class="right-way"></section>
+                <h5 class="right-item">热门留言</h5>
+                <div class="comment_list">
+                    <dl v-for="item in hotComments">
+                        <dt>
+                            <img :src="item.user.avatarUrl" />
+                        </dt>
+                        <dd class="name">{{item.user.nickname}}</dd>
+                        <dd class="detail">{{item.content}}</dd>
+                    </dl>
+                    <img src="images/line.png" class="right_line">
+                </div>
             </section>
         </section>
         <!-- 内容区结束 -->
@@ -59,5 +83,76 @@
         <!-- 底部结束 -->
     </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 官网提供的 axios 在线地址 -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    axios.defaults.baseURL = `https://apimusic.linweiqin.com/`;
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            //搜索是关键子
+            query: '',
+            //歌曲列表
+            musicList: [],
+            //歌曲的url
+            musicUrl: "",
+            //歌曲热门评论
+            hotComments: [],
+            //歌曲封面地址
+            coverUrl: "",
+            // 显示视频播放
+            showVideo: false,
+        },
+        methods: {
+            //搜索歌曲
+            searchMusic: function() {
+                if (this.query == 0) {
+                    return
+                }
+                axios.get('/search?keywords=' + this.query).then(response => {
+                    // 保存内容
+                    this.musicList = response.data.result.songs;
+                    console.log(response.data.result.songs)
+
+                })
+                this.query = ''
+            },
+            //播放歌曲
+            playMusic: function(musicId) {
+                axios.get('/song/url?id=' + musicId).then(response => {
+                        // 保存歌曲url地址
+                        this.musicUrl = response.data.data[0].url
+                        console.log(response.data.data[0].url)
+
+                    })
+                    //获取歌曲评论
+                axios.get('/comment/hot?type=0&id=' + musicId).then(response => {
+                        this.hotComments = response.data.hotComments
+                        console.log(this.hotComments)
+                    })
+                    // 获取歌曲封面
+                axios.get('/song/detail?ids=' + musicId).then(response => {
+                    console.log(response)
+                        // 设置封面
+                    this.coverUrl = response.data.songs[0].al.picUrl
+                })
+            },
+            playmv(vid) {
+                if (vid) {
+                    this.showVideo = true;
+                    // 获取mv信息
+                    axios.get('/mv/url?id=' + vid).then(response => {
+                        // console.log(response)
+                        // 暂停歌曲播放
+                        this.$refs.audio.pause()
+                            // 获取mv地址
+                        this.mvUrl = response.data.data.url
+                    })
+                }
+            },
+        }
+    })
+</script>
 
 </html>

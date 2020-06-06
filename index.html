@@ -27,6 +27,7 @@
                             <a href="javascript:;" @click='playMusic(item.id)'></a>
                             <b>{{item.name}}</b>
                             <span>
+
                 <i @click="playMv(item.mvid)" v-if="item.mvid!=0"></i>
               </span>
                         </li>
@@ -110,6 +111,7 @@
                     axios.get('/search?keywords=' + this.query).then(response => {
                         // 保存内容
                         this.musicList = response.data.result.songs;
+                        console.log(response.data.result.songs)
 
                     })
 
@@ -122,6 +124,7 @@
                     axios.get('/song/url?id=' + musicId).then(response => {
                             // 保存歌曲url地址
                             this.musicUrl = response.data.data[0].url
+
                         })
                         // 获取歌曲热门评论
                     axios.get('/comment/hot?type=0&id=' + musicId).then(response => {
