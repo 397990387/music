@@ -10,6 +10,7 @@ body {
   width: 800px;
   height: 500px;
   border: 1px solid red;
+  margin: auto;
 }
 #app .navs {
   width: 100%;
