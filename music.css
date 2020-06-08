@@ -7,6 +7,7 @@ body {
   background-image: url("images/bg.jpg");
 }
 #app {
+  margin: auto;
   width: 800px;
   height: 500px;
   border: 1px solid skyblue;
@@ -17,6 +18,11 @@ body {
   display: flex;
   justify-content: space-between;
   background-color: #39abd8;
+}
+#app .navs .navs-gc {
+  width: 400px;
+  height: 50px;
+  background-color: white;
 }
 #app .navs .navs-img {
   height: 50px;
@@ -120,29 +126,6 @@ body {
   z-index: 1;
   cursor: pointer;
 }
-#app .content .middle {
-  position: relative;
-  width: 400px;
-  height: 400px;
-}
-#app .content .middle .middle-top {
-  position: absolute;
-  left: 50%;
-}
-#app .content .middle .middle-bottom {
-  margin: auto;
-  margin-top: 60px;
-  width: 250px;
-  height: 250px;
-}
-#app .content .middle .middle-bottom .img {
-  z-index: -1;
-  position: absolute;
-  top: 118px;
-  left: 134px;
-  width: 138px;
-  height: 138px;
-}
 #app .content .right {
   width: 180px;
   height: 435px;
@@ -179,4 +162,72 @@ body {
 #app .bottom audio {
   height: 40px;
   width: 100%;
+}
+#app .video_con {
+  width: 800px;
+  height: 400px;
+  position: relative;
+}
+#app .video_con video {
+  width: 100%;
+  height: 100%;
+}
+#app .video_con .mask {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  color: white;
+}
+.player_con {
+  width: 400px;
+  height: 435px;
+  position: relative;
+}
+.disc {
+  position: absolute;
+  left: 73px;
+  top: 60px;
+  z-index: 9;
+}
+.cover {
+  position: absolute;
+  left: 125px;
+  top: 112px;
+  width: 150px;
+  height: 150px;
+  border-radius: 75px;
+  z-index: 8;
+}
+/* 是否正在播放 */
+.player_con.playing .disc,
+.player_con.playing .cover {
+  animation-play-state: running;
+}
+.play_bar {
+  position: absolute;
+  left: 200px;
+  top: -10px;
+  z-index: 10;
+  transform: rotate(-25deg);
+  transform-origin: 12px 12px;
+  transition: 1s;
+}
+/* 播放杆 转回去 */
+.player_con.playing .play_bar {
+  transform: rotate(0);
+}
+@keyframes Rotate {
+  from {
+    transform: rotateZ(0);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+.autoRotate {
+  animation-name: Rotate;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+  animation-timing-function: linear;
+  animation-duration: 5s;
 }

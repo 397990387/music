@@ -20,6 +20,7 @@
             <section class="navs-img">
                 <img src="./images/player_title.png" alt="">
             </section>
+            <!-- <section class="navs-gc">{{item.lyric}}</section> -->
             <section class="navs-content">
                 <input type="text" autocomplete="off" v-model='query' @keyup.enter="searchMusic()">
                 <img src="./images/zoom.png">
@@ -35,9 +36,10 @@
                         <!-- 点击看开始的图片 -->
                         <!-- 点击这个小播放图片的时候,歌会自动播放 -->
                         <a href="javascript:;" @click="playMusic(item.id)"></a>
+                        <!-- 歌曲的名字 -->
                         <b>{{item.name}}</b>
                         <span>
-                            <!--  -->
+                            <!-- 是否有视频 -->
                                 <i @click=playmv(item.mvid) v-if="item.mvid!=0" ></i>
                             </span>
                     </li>
@@ -46,15 +48,12 @@
             </div>
             <!-- 左边结束 -->
             <!-- 中间 -->
-            <section class="middle">
-                <section class="middle-top">
-                    <img src="./images/player_bar.png">
-                </section>
-                <section class="middle-bottom">
-                    <img src="./images/disc.png">
-                    <img class="img" src="./images/cover.png">
-                </section>
-            </section>
+            <div class="player_con" :class="{playing:isPlay}">
+                <img src="images/player_bar.png" class="play_bar" />
+                <!-- 黑胶碟片 -->
+                <img src="images/disc.png" class="disc autoRotate" />
+                <img :src="coverUrl==''?'./images/cover.png':coverUrl" class="cover autoRotate" />
+            </div>
             <!-- 右边 -->
             <section class="right">
                 <h5 class="right-item">热门留言</h5>
@@ -73,12 +72,14 @@
         <!-- 内容区结束 -->
         <!-- 底部开始 -->
         <section class="bottom">
-            <audio controls></audio>
-            <!-- <section class="bottom-one"></section>
-            <section class="bottom-two"></section>
-            <section class="bottom-three"></section>
-            <section class="bottom-four"></section> -->
+            <audio ref="audio" @play="play" @pause="pause" :src="musicUrl" controls autoplay loop class="myaudio"></audio>
         </section>
+
+        <!-- mv视频 -->
+        <div class="video_con" v-show="showVideo">
+            <video ref="ref" :src="mvUrl" controls></video>
+            <div class="mask" @click="closeMv">X</div>
+        </div>
 
         <!-- 底部结束 -->
     </div>
@@ -92,7 +93,7 @@
         el: "#app",
         data: {
             //搜索是关键子
-            query: '',
+            query: '热门',
             //歌曲列表
             musicList: [],
             //歌曲的url
@@ -103,6 +104,12 @@
             coverUrl: "",
             // 显示视频播放
             showVideo: false,
+            //mv的地址
+            mvUrl: "",
+            //是否播放
+            isplay: false,
+            //获取歌词
+            lyRic: ""
         },
         methods: {
             //搜索歌曲
@@ -124,7 +131,6 @@
                         // 保存歌曲url地址
                         this.musicUrl = response.data.data[0].url
                         console.log(response.data.data[0].url)
-
                     })
                     //获取歌曲评论
                 axios.get('/comment/hot?type=0&id=' + musicId).then(response => {
@@ -133,11 +139,29 @@
                     })
                     // 获取歌曲封面
                 axios.get('/song/detail?ids=' + musicId).then(response => {
-                    console.log(response)
-                        // 设置封面
+                    // console.log(response)
+                    // 设置封面
                     this.coverUrl = response.data.songs[0].al.picUrl
                 })
+
+                //获取歌词
+                axios.get('/lyric?id=' + musicId).then(response => {
+                    console.log(response)
+                    this.lyRic = response.data.lrc.lyric
+                    console.log(this.lyRic)
+
+                })
+
             },
+            //audio 的play事件
+            play: function() {
+                this.isplay = true
+                this.mvUrl = " "
+            },
+            pause: function() {
+                this.isplay = false
+            },
+            //获取mv
             playmv(vid) {
                 if (vid) {
                     this.showVideo = true;
@@ -151,6 +175,17 @@
                     })
                 }
             },
+            //关闭mv界面
+            closeMv() {
+                this.showVideo = false
+                this.$refs.video.pause()
+            },
+            // 搜索历史记录中的歌曲
+            historySearch(history) {
+                this.query = history
+                this.searchMusic()
+                this.showHistory = false;
+            }
         }
     })
 </script>
