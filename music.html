@@ -72,9 +72,12 @@
         <!-- 内容区结束 -->
         <!-- 底部开始 -->
         <section class="bottom">
-            <audio ref="audio" @play="play" @pause="pause" :src="musicUrl" controls autoplay loop class="myaudio"></audio>
+            <audio ref="audio" @play="play" @pause="pause" :src="musicUrl" controls autoplay class="myaudio"></audio>
+            <div class="bottom_right" @click="parseLyric">歌词</div>
         </section>
-
+        <div class="lyrics">
+            {{lyRic}}
+        </div>
         <!-- mv视频 -->
         <div class="video_con" v-show="showVideo">
             <video ref="ref" :src="mvUrl" controls></video>
@@ -92,6 +95,7 @@
     let vm = new Vue({
         el: "#app",
         data: {
+            see: false,
             //搜索是关键子
             query: '热门',
             //歌曲列表
@@ -146,13 +150,16 @@
 
                 //获取歌词
                 axios.get('/lyric?id=' + musicId).then(response => {
-                    console.log(response)
                     this.lyRic = response.data.lrc.lyric
-                    console.log(this.lyRic)
+
 
                 })
 
             },
+            parseLyric: function(lyRic) {
+                this.see = true
+            },
+
             //audio 的play事件
             play: function() {
                 this.isplay = true
